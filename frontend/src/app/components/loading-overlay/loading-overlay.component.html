@@ -1,0 +1,7 @@
+<div *ngIf="isVisible()" class="position-fixed top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center" style="background-color: rgba(255,255,255,0.85); z-index: 2000; backdrop-filter: blur(4px);">
+  <div class="spinner-border text-primary shadow-sm" style="width: 4.5rem; height: 4.5rem; border-width: 0.35em;" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <h4 class="mt-4 fw-bold text-primary">{{ message() }}</h4>
+  <p class="text-secondary px-4 text-center mt-2">Please wait while we gather the best matches from the server.</p>
+</div>

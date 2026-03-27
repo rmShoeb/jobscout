@@ -1,0 +1,31 @@
+<div *ngIf="isOpen()" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.6);" (click)="onClose()">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" (click)="$event.stopPropagation()">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+      
+      <div class="modal-header bg-primary text-white border-bottom-0 py-3">
+        <h4 class="modal-title fw-bold mb-0" *ngIf="job()">{{ job()?.title }}</h4>
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="onClose()"></button>
+      </div>
+      
+      <div class="modal-body p-4 bg-light" *ngIf="job()">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+          <span class="fs-5 fw-semibold text-secondary"><i class="bi bi-geo-alt-fill me-2"></i>{{ job()?.location }} &bull; {{ job()?.type }}</span>
+          <span class="badge bg-success fs-6 rounded-pill px-3 py-2 shadow-sm">{{ job()?.salary || 'Salary Not Provided' }}</span>
+        </div>
+        
+        <div class="card border-0 shadow-sm rounded-3">
+          <div class="card-body p-4">
+            <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark">Job Description</h5>
+            <div class="text-secondary lh-lg" style="font-size: 1.05rem;" [innerHTML]="job()?.fullDescription || job()?.descriptionSnippet || 'No description provided.'"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer bg-white border-top-0 d-flex justify-content-between p-3">
+        <button type="button" class="btn btn-outline-secondary px-4 py-2 fw-semibold rounded-pill" (click)="onClose()">Close</button>
+        <a *ngIf="job()" [href]="job()?.url" target="_blank" rel="noopener noreferrer" class="btn btn-primary px-5 py-2 fw-bold shadow border-0 rounded-pill">See Details</a>
+      </div>
+      
+    </div>
+  </div>
+</div>

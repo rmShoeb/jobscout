@@ -1,0 +1,75 @@
+<!-- Blocking Overlay locks UI entirely during heavy data fetches -->
+<app-loading-overlay [isVisible]="isLoading()"></app-loading-overlay>
+
+<!-- Unified Reusable Modal rendering wake-ups or errors -->
+<app-reusable-modal 
+  [isOpen]="modalConfig().isOpen" 
+  [title]="modalConfig().title" 
+  [message]="modalConfig().message" 
+  [isError]="modalConfig().isError"
+  (close)="closeModal()">
+</app-reusable-modal>
+
+<!-- Job Listing Detailed Popout -->
+<app-job-details-modal 
+  [isOpen]="selectedJob() !== null" 
+  [job]="selectedJob()" 
+  (closeModal)="closeJobDetails()">
+</app-job-details-modal>
+
+<div class="container py-5">
+  <!-- Top level Google AdSense slot -->
+  <app-ad-banner adSlotId="top-header-slot"></app-ad-banner>
+  
+  <div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-8">
+      
+      <!-- Primary Core Interaction Layer -->
+      <app-search-menu 
+        (search)="onSearch($event)" 
+        (clear)="onClearSearch()">
+      </app-search-menu>
+
+      <!-- Results Container rendering dynamic jobs -->
+      <div *ngIf="jobs().length > 0" class="mt-5 border-top pt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h4 class="fw-bold text-dark m-0">Found {{ totalJobs() }} Matches</h4>
+        </div>
+
+        <app-pagination 
+          [currentPage]="currentPage()" 
+          [pageSize]="pageSize()" 
+          [totalPages]="totalPages()"
+          (pageChange)="onPageChange($event)"
+          (sizeChange)="onSizeChange($event)">
+        </app-pagination>
+
+        <div class="row g-3">
+          <div *ngFor="let job of jobs(); let i = index" class="col-12">
+            <!-- Interleave Monetization slot strictly every 5 items exactly as targeted -->
+            <app-ad-banner *ngIf="i > 0 && i % 5 === 0" [adSlotId]="'interleaved-ad-' + i" class="d-block mb-3"></app-ad-banner>
+            
+            <app-job-card [job]="job" (jobClicked)="openJobDetails($event)"></app-job-card>
+          </div>
+        </div>
+
+        <app-pagination 
+          [currentPage]="currentPage()" 
+          [pageSize]="pageSize()" 
+          [totalPages]="totalPages()"
+          (pageChange)="onPageChange($event)"
+          (sizeChange)="onSizeChange($event)">
+        </app-pagination>
+      </div>
+
+      <!-- No Results Graceful Fallback State -->
+      <div *ngIf="jobs().length === 0 && lastCriteria() !== null && !isLoading()" class="text-center py-5 mt-4 text-muted bg-white rounded-4 shadow-sm border">
+        <i class="bi bi-search text-secondary opacity-50 d-block mb-3" style="font-size: 4rem;"></i>
+        <h3 class="fw-bold">No results found</h3>
+        <p class="px-5">Try broadening your keywords, omitting location criteria, or clearing the Ignore location parameters.</p>
+        <button class="btn btn-outline-primary mt-3 rounded-pill px-4 py-2 fw-semibold border-2" (click)="onClearSearch()">Reset Filtering</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
