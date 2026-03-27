@@ -1,9 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from fastapi import Request
 import os
+import logging
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Configure standard console logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+logger = logging.getLogger("jobscout")
 
 app = FastAPI(title="Job Scout Backend API")
 
@@ -18,8 +26,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    logger.warning(f"Validation error on {request.url}: {exc.errors()}")
+    return JSONResponse(
+        status_code=422,
+        content={"detail": "Invalid search parameters provided. Please verify your keyword and location inputs."},
+    )
+
+
 @app.get("/api/health")
-def health_check():
+async def health_check():
     return {"status": "healthy", "message": "Backend proxy is awake and ready."}
 
 @app.get("/")
@@ -32,9 +49,14 @@ provider = TheirStackProvider()
 
 @app.post("/api/search")
 def search_jobs(request: JobSearchRequest):
-    # This runs in a background thread implicitly because it's a `def` instead of `async def`
-    # Therefore, the synchronous requests.post in the provider will not block FastAPI.
-    return provider.search(request)
+    logger.info(f"Triggering search for keyword: '{request.keyword}' | Location: '{request.location}'")
+    try:
+        results = provider.search(request)
+        logger.info(f"Search successful. Returned {results.get('total', 0)} jobs.")
+        return results
+    except Exception as e:
+        logger.error(f"Search endpoint encountered an error: {str(e)}")
+        raise
 
 if __name__ == "__main__":
     import uvicorn

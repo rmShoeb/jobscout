@@ -35,7 +35,8 @@ export class JobService {
     if (error.error instanceof ErrorEvent) {
       errorMessage = `Network Error: ${error.error.message}`;
     } else {
-      errorMessage = error.error?.error || `Server Error [${error.status}]: ${error.message}`;
+      // Safely parse FastAPI's specific detail string to avoid dumping ugly HTTP raw strings to the user
+      errorMessage = error.error?.detail || `A server error occurred (Code ${error.status}). Please try again later.`;
     }
     return throwError(() => new Error(errorMessage));
   }

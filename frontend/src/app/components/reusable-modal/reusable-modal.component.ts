@@ -13,6 +13,7 @@ export class ReusableModalComponent {
   title = input.required<string>();
   message = input.required<string>();
   isError = input<boolean>(false);
+  isClosable = input<boolean>(true);
   
   close = output<void>();
 

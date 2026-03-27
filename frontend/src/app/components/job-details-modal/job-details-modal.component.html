@@ -4,7 +4,6 @@
       
       <div class="modal-header bg-primary text-white border-bottom-0 py-3">
         <h4 class="modal-title fw-bold mb-0" *ngIf="job()">{{ job()?.title }}</h4>
-        <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="onClose()"></button>
       </div>
       
       <div class="modal-body p-4 bg-light" *ngIf="job()">
@@ -23,7 +22,7 @@
       
       <div class="modal-footer bg-white border-top-0 d-flex justify-content-between p-3">
         <button type="button" class="btn btn-outline-secondary px-4 py-2 fw-semibold rounded-pill" (click)="onClose()">Close</button>
-        <a *ngIf="job()" [href]="job()?.url" target="_blank" rel="noopener noreferrer" class="btn btn-primary px-5 py-2 fw-bold shadow border-0 rounded-pill">See Details</a>
+        <a *ngIf="job()" [href]="job()?.url" target="_blank" rel="noopener noreferrer" class="btn btn-primary px-5 py-2 fw-bold shadow border-0 rounded-pill">Go to job post</a>
       </div>
       
     </div>

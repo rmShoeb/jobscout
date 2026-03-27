@@ -36,11 +36,12 @@ export class AppComponent implements OnInit {
   isLoading = signal<boolean>(false);
   isWakingUp = signal<boolean>(true);
   
-  modalConfig = signal<{isOpen: boolean, title: string, message: string, isError: boolean}>({
-    isOpen: true,
+  modalConfig = signal<{isOpen: boolean, title: string, message: string, isError: boolean, isClosable: boolean}>({
+    isOpen: false,
     title: 'Server Wake-up',
     message: 'Waking up the server... Because this is hosted on a free tier, it may take up to 50 seconds to boot. Please wait!',
-    isError: false
+    isError: false,
+    isClosable: false
   });
 
   jobs = signal<Job[]>([]);
@@ -56,15 +57,24 @@ export class AppComponent implements OnInit {
   lastCriteria = signal<SearchCriteria | null>(null);
 
   ngOnInit(): void {
+    // Only show the wake-up modal if the server takes longer than 800ms to respond
+    const wakeUpTimer = setTimeout(() => {
+      if (this.isWakingUp()) {
+        this.modalConfig.update(c => ({ ...c, isOpen: true }));
+      }
+    }, 800);
+
     // Fire Wake-Up Check
     this.jobService.checkHealth().subscribe({
       next: () => {
+        clearTimeout(wakeUpTimer);
         this.isWakingUp.set(false);
         if (this.modalConfig().title === 'Server Wake-up') {
           this.closeModal();
         }
       },
       error: (err) => {
+        clearTimeout(wakeUpTimer);
         this.isWakingUp.set(false);
         this.showError('System Connectivity Error', 'Failed to connect to the backend server. Make sure it is running or try refreshing the page.');
       }
@@ -125,7 +135,7 @@ export class AppComponent implements OnInit {
   }
 
   showError(title: string, message: string): void {
-    this.modalConfig.set({ isOpen: true, title, message, isError: true });
+    this.modalConfig.set({ isOpen: true, title, message, isError: true, isClosable: true });
   }
 
   closeModal(): void {

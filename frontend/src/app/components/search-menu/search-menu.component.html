@@ -1,32 +1,43 @@
 <div class="card shadow-lg border-0 rounded-4 overflow-hidden mb-5">
   <div class="card-header bg-primary text-white py-3 border-bottom-0 ps-4">
     <h4 class="mb-0 fw-bold d-flex align-items-center"><i class="bi bi-search me-2"></i>Job Scout</h4>
-    <p class="mb-0 text-white-50 small mt-1">Find your next role with intelligent filtering.</p>
+    <p class="mb-0 text-white-50 small mt-1">Find your next role...</p>
   </div>
-  
+
   <div class="card-body p-4 bg-white">
     <!-- Using ngSubmit on a form allows native Enter key binding to trigger search seamlessly -->
     <form (ngSubmit)="onSearch()">
       <div class="row g-3">
-        <div class="col-md-12">
-          <label for="keywordInput" class="form-label fw-bold text-secondary mb-1">Keywords, Title, or Company <span class="text-danger">*</span></label>
-          <input type="text" id="keywordInput" class="form-control form-control-lg shadow-sm border-light" [(ngModel)]="keyword" name="keyword" placeholder="e.g. Senior Angular Developer" required>
+        <div class="col-md-9">
+          <label for="keywordInput" class="form-label fw-bold text-secondary mb-1">Keywords, Title, or Company <span
+              class="text-danger">*</span></label>
+          <input type="text" id="keywordInput" class="form-control form-control-lg shadow-sm border-light"
+            [(ngModel)]="keyword" name="keyword" placeholder="e.g. Senior Angular Developer" required>
         </div>
         
+        <div class="col-md-3">
+          <label for="maxAgeInput" class="form-label fw-bold text-secondary mb-1">Max Age (Days) <span class="text-danger">*</span></label>
+          <input type="number" id="maxAgeInput" class="form-control form-control-lg shadow-sm border-light fw-bold text-primary" [(ngModel)]="maxAgeDays" name="maxAgeDays" min="1" max="365" required>
+        </div>
+
         <div class="col-md-6 mt-4">
           <label for="locationInput" class="form-label fw-semibold text-secondary mb-1">Target Location</label>
-          <input type="text" id="locationInput" class="form-control shadow-sm border-light" [(ngModel)]="location" name="location" placeholder="e.g. Remote, San Francisco, CA">
+          <input type="text" id="locationInput" class="form-control shadow-sm border-light" [(ngModel)]="location"
+            name="location" placeholder="e.g. Remote, San Francisco, CA">
         </div>
-        
+
         <div class="col-md-6 mt-4">
           <label for="ignoreLocationInput" class="form-label fw-semibold text-secondary mb-1">Ignore Locations</label>
-          <input type="text" id="ignoreLocationInput" class="form-control shadow-sm border-light" [(ngModel)]="ignoreLocations" name="ignoreLocations" placeholder="e.g. India, UK">
+          <input type="text" id="ignoreLocationInput" class="form-control shadow-sm border-light"
+            [(ngModel)]="ignoreLocations" name="ignoreLocations" placeholder="e.g. India, UK">
         </div>
       </div>
-      
+
       <div class="d-flex justify-content-end align-items-center mt-4 pt-3 border-top gap-3">
-        <button type="button" class="btn btn-light px-4 fw-semibold text-secondary border shadow-sm" (click)="onClear()">Clear Form</button>
-        <button type="submit" class="btn btn-primary px-5 py-2 fw-bold shadow" [disabled]="!keyword.trim()">Start Search</button>
+        <button type="button" class="btn btn-light px-4 fw-semibold text-secondary border shadow-sm"
+          (click)="onClear()">Clear Form</button>
+        <button type="submit" class="btn btn-primary px-5 py-2 fw-bold shadow" [disabled]="!keyword.trim()">Start
+          Search</button>
       </div>
     </form>
   </div>

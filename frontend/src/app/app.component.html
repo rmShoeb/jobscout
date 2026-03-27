@@ -7,6 +7,7 @@
   [title]="modalConfig().title" 
   [message]="modalConfig().message" 
   [isError]="modalConfig().isError"
+  [isClosable]="modalConfig().isClosable"
   (close)="closeModal()">
 </app-reusable-modal>
 
@@ -45,12 +46,16 @@
         </app-pagination>
 
         <div class="row g-3">
-          <div *ngFor="let job of jobs(); let i = index" class="col-12">
-            <!-- Interleave Monetization slot strictly every 5 items exactly as targeted -->
-            <app-ad-banner *ngIf="i > 0 && i % 5 === 0" [adSlotId]="'interleaved-ad-' + i" class="d-block mb-3"></app-ad-banner>
+          <ng-container *ngFor="let job of jobs(); let i = index">
+            <!-- Inject ad banner securely in its own grid row completely escaping the card flex-height context -->
+            <div class="col-12" *ngIf="i > 0 && i % 5 === 0">
+              <app-ad-banner [adSlotId]="'interleaved-ad-' + i"></app-ad-banner>
+            </div>
             
-            <app-job-card [job]="job" (jobClicked)="openJobDetails($event)"></app-job-card>
-          </div>
+            <div class="col-12">
+              <app-job-card [job]="job" (jobClicked)="openJobDetails($event)"></app-job-card>
+            </div>
+          </ng-container>
         </div>
 
         <app-pagination 

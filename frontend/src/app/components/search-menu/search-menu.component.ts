@@ -6,6 +6,7 @@ export interface SearchCriteria {
   keyword: string;
   location: string;
   ignoreLocations: string;
+  maxAgeDays: number;
 }
 
 @Component({
@@ -19,16 +20,18 @@ export class SearchMenuComponent {
   keyword = '';
   location = '';
   ignoreLocations = '';
+  maxAgeDays = 30;
 
   search = output<SearchCriteria>();
   clear = output<void>();
 
   onSearch(): void {
-    if (this.keyword.trim()) {
+    if (this.keyword.trim() && this.maxAgeDays > 0) {
       this.search.emit({
         keyword: this.keyword.trim(),
         location: this.location.trim(),
-        ignoreLocations: this.ignoreLocations.trim()
+        ignoreLocations: this.ignoreLocations.trim(),
+        maxAgeDays: this.maxAgeDays
       });
     }
   }
@@ -37,6 +40,7 @@ export class SearchMenuComponent {
     this.keyword = '';
     this.location = '';
     this.ignoreLocations = '';
+    this.maxAgeDays = 30;
     this.clear.emit();
   }
 }
