@@ -12,11 +12,11 @@ import { Job } from '../../models/job.model';
 export class JobCardComponent {
   // Utilizing Angular 18 Signal inputs for optimized zoneless change detection
   job = input.required<Job>();
-  
+
   // Emits the job when card is clicked to open the modal
   jobClicked = output<Job>();
 
-  onCardClick(): void {
+  onJobClick(): void {
     this.jobClicked.emit(this.job());
   }
 }
