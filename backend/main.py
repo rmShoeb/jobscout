@@ -7,6 +7,10 @@ import os
 import logging
 from dotenv import load_dotenv
 
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
 load_dotenv()
 
 # Configure standard console logging
@@ -14,6 +18,11 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(level
 logger = logging.getLogger("jobscout")
 
 app = FastAPI(title="Job Scout Backend API")
+
+# Initialize and attach the remote IP address standard rate limiter
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Configure CORS dynamically based on environment configuration
 ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN", "http://localhost:4200")
@@ -48,10 +57,11 @@ from providers import TheirStackProvider, JobSearchRequest
 provider = TheirStackProvider()
 
 @app.post("/api/search")
-def search_jobs(request: JobSearchRequest):
-    logger.info(f"Triggering search for keyword: '{request.keyword}' | Location: '{request.location}'")
+@limiter.limit("5/minute")
+def search_jobs(request: Request, search_req: JobSearchRequest):
+    logger.info(f"Triggering search for keyword: '{search_req.keyword}' | Location: '{search_req.location}'")
     try:
-        results = provider.search(request)
+        results = provider.search(search_req)
         logger.info(f"Search successful. Returned {results.get('total', 0)} jobs.")
         return results
     except Exception as e:
