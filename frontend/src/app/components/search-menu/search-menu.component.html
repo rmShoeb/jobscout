@@ -1,6 +1,6 @@
 <div class="card shadow-lg border-0 rounded-4 overflow-hidden mb-5">
   <div class="card-header bg-primary text-white py-3 border-bottom-0 ps-4">
-    <h4 class="mb-0 fw-bold d-flex align-items-center"><i class="bi bi-search me-2"></i>Job Scout</h4>
+    <h4 class="mb-0 fw-bold d-flex align-items-center">Job Scout</h4>
     <p class="mb-0 text-white-50 small mt-1">Find your next role...</p>
   </div>
 
@@ -8,28 +8,59 @@
     <!-- Using ngSubmit on a form allows native Enter key binding to trigger search seamlessly -->
     <form (ngSubmit)="onSearch()">
       <div class="row g-3">
-        <div class="col-md-9">
-          <label for="keywordInput" class="form-label fw-bold text-secondary mb-1">Keywords, Title, or Company <span
+        <div class="col-md-6">
+          <label for="keywordInput" class="form-label fw-bold text-secondary mb-1">Keywords, or Title <span
               class="text-danger">*</span></label>
-          <input type="text" id="keywordInput" class="form-control form-control-lg shadow-sm border-light"
+          <input type="text" id="keywordInput" class="form-control form-control shadow-sm border-light"
             [(ngModel)]="keyword" name="keyword" placeholder="e.g. Senior Angular Developer" required>
         </div>
-        
+
+        <div class="col-md-6">
+          <label for="companyInput" class="form-label fw-bold text-secondary mb-1">Company</label>
+          <input type="text" id="companyInput" class="form-control form-control shadow-sm border-light"
+            placeholder="e.g. Mozilla">
+        </div>
+
         <div class="col-md-3">
-          <label for="maxAgeInput" class="form-label fw-bold text-secondary mb-1">Max Age (Days) <span class="text-danger">*</span></label>
-          <input type="number" id="maxAgeInput" class="form-control form-control-lg shadow-sm border-light fw-bold text-primary" [(ngModel)]="maxAgeDays" name="maxAgeDays" min="1" max="365" required>
+          <label for="maxAgeInput" class="form-label fw-bold text-secondary mb-1">Max Age (Days) <span
+              class="text-danger">*</span></label>
+          <input type="number" id="maxAgeInput" class="form-control form-control shadow-sm border-light"
+            [(ngModel)]="maxAgeDays" name="maxAgeDays" min="1" max="365" required>
         </div>
 
-        <div class="col-md-6 mt-4">
-          <label for="locationInput" class="form-label fw-semibold text-secondary mb-1">Target Location</label>
+        <div class="col-md-3">
+          <label for="experienceLevelInput" class="form-label fw-bold text-secondary mb-1">Experience Level</label>
+          <mat-select multiple>
+            @for (level of experienceLevelList; track level) {
+            <mat-option [value]="level">{{level}}</mat-option>
+            }
+          </mat-select>
+        </div>
+
+        <div class="col-md-3">
+          <label for="jobTypeInput" class="form-label fw-bold text-secondary mb-1">Job Type</label>
+          <mat-select multiple>
+            @for (level of jobTypeList; track level) {
+            <mat-option [value]="level">{{level}}</mat-option>
+            }
+          </mat-select>
+        </div>
+
+        <div class="col-md-3">
+          <!-- <mat-slide-toggle [(ngModel)]="isChecked">Slide Toggle Checked: {{isChecked}}</mat-slide-toggle> -->
+          <mat-slide-toggle>Remote</mat-slide-toggle>
+        </div>
+
+        <div class="col-md-4 mt-4">
+          <label for="locationInput" class="form-label fw-semibold text-secondary mb-1">Preferred Location</label>
           <input type="text" id="locationInput" class="form-control shadow-sm border-light" [(ngModel)]="location"
-            name="location" placeholder="e.g. Remote, San Francisco, CA">
+            name="location" placeholder="e.g. Bangladesh">
         </div>
 
-        <div class="col-md-6 mt-4">
+        <div class="col-md-4 mt-4">
           <label for="ignoreLocationInput" class="form-label fw-semibold text-secondary mb-1">Ignore Locations</label>
           <input type="text" id="ignoreLocationInput" class="form-control shadow-sm border-light"
-            [(ngModel)]="ignoreLocations" name="ignoreLocations" placeholder="e.g. India, UK">
+            [(ngModel)]="ignoreLocations" name="ignoreLocations" placeholder="e.g. Pissrael">
         </div>
       </div>
 

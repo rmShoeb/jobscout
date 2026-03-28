@@ -1,6 +1,8 @@
 import { Component, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSelectModule } from '@angular/material/select';
 
 export interface SearchCriteria {
   keyword: string;
@@ -12,7 +14,12 @@ export interface SearchCriteria {
 @Component({
   selector: 'app-search-menu',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatSlideToggleModule,
+    MatSelectModule
+  ],
   templateUrl: './search-menu.component.html',
   styleUrl: './search-menu.component.scss'
 })
@@ -21,6 +28,8 @@ export class SearchMenuComponent {
   location = '';
   ignoreLocations = '';
   maxAgeDays = 30;
+  experienceLevelList = ['Entry Level', 'Mid Level', 'Senior Level', 'Lead Level', 'Manager Level', 'Director Level', 'Executive Level'];
+  jobTypeList = ['Full-time', 'Part-time', 'Contract', 'Temporary', 'Internship', 'Other']
 
   search = output<SearchCriteria>();
   clear = output<void>();
