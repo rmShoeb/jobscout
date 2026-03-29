@@ -21,14 +21,14 @@
             placeholder="e.g. Mozilla">
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
           <label for="maxAgeInput" class="form-label fw-bold text-secondary mb-1">Max Age (Days) <span
               class="text-danger">*</span></label>
           <input type="number" id="maxAgeInput" class="form-control form-control shadow-sm border-light"
             [(ngModel)]="maxAgeDays" name="maxAgeDays" min="1" max="365" required>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <label for="experienceLevelInput" class="form-label fw-bold text-secondary mb-1">Experience Level</label>
           <mat-select multiple>
             @for (level of experienceLevelList; track level) {
@@ -37,7 +37,7 @@
           </mat-select>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <label for="jobTypeInput" class="form-label fw-bold text-secondary mb-1">Job Type</label>
           <mat-select multiple>
             @for (level of jobTypeList; track level) {
@@ -46,9 +46,10 @@
           </mat-select>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
           <!-- <mat-slide-toggle [(ngModel)]="isChecked">Slide Toggle Checked: {{isChecked}}</mat-slide-toggle> -->
-          <mat-slide-toggle>Remote</mat-slide-toggle>
+          <label class="form-label fw-semibold text-secondary mb-1">Remote</label><br>
+          <mat-slide-toggle></mat-slide-toggle>
         </div>
 
         <div class="col-md-4 mt-4">
