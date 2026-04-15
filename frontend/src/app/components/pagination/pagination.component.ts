@@ -10,20 +10,13 @@ import { CommonModule } from '@angular/common';
 })
 export class PaginationComponent {
   currentPage = input.required<number>();
-  pageSize = input.required<number>();
-  totalPages = input.required<number>();
+  hasMoreResults = input.required<boolean>();
   
   pageChange = output<number>();
-  sizeChange = output<number>();
 
   onPageChange(page: number): void {
-    if (page >= 1 && page <= this.totalPages()) {
+    if (page >= 1) {
       this.pageChange.emit(page);
     }
-  }
-
-  onSizeChange(event: any): void {
-    const size = parseInt(event.target.value, 10);
-    this.sizeChange.emit(size);
   }
 }

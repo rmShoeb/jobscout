@@ -5,71 +5,100 @@
   </div>
 
   <div class="card-body p-4 bg-white">
-    <!-- Using ngSubmit on a form allows native Enter key binding to trigger search seamlessly -->
-    <form (ngSubmit)="onSearch()">
-      <div class="row g-3">
-        <div class="col-md-6">
-          <label for="keywordInput" class="form-label fw-bold text-secondary mb-1">Keywords, or Title <span
-              class="text-danger">*</span></label>
-          <input type="text" id="keywordInput" class="form-control form-control shadow-sm border-light"
-            [(ngModel)]="keyword" name="keyword" placeholder="e.g. Senior Angular Developer" required>
-        </div>
+    <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
 
-        <div class="col-md-6">
-          <label for="companyInput" class="form-label fw-bold text-secondary mb-1">Company</label>
-          <input type="text" id="companyInput" class="form-control form-control shadow-sm border-light"
-            placeholder="e.g. Mozilla">
-        </div>
-
-        <div class="col-md-2">
-          <label for="maxAgeInput" class="form-label fw-bold text-secondary mb-1">Max Age (Days) <span
-              class="text-danger">*</span></label>
-          <input type="number" id="maxAgeInput" class="form-control form-control shadow-sm border-light"
-            [(ngModel)]="maxAgeDays" name="maxAgeDays" min="1" max="365" required>
+      <!-- Row 1: The "What" — Core Search -->
+      <div class="row g-3 mb-2">
+        <div class="col-md-8">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Keywords, or Title</mat-label>
+            <input matInput formControlName="keyword" placeholder="e.g. Senior Angular Developer, Backend Engineer">
+            <mat-icon matSuffix>search</mat-icon>
+            <mat-error *ngIf="searchForm.get('keyword')?.hasError('required')">Keyword is required.</mat-error>
+            <mat-error *ngIf="searchForm.get('keyword')?.hasError('minlength')">Minimum 2 characters.</mat-error>
+          </mat-form-field>
         </div>
 
         <div class="col-md-4">
-          <label for="experienceLevelInput" class="form-label fw-bold text-secondary mb-1">Experience Level</label>
-          <mat-select multiple>
-            @for (level of experienceLevelList; track level) {
-            <mat-option [value]="level">{{level}}</mat-option>
-            }
-          </mat-select>
-        </div>
-
-        <div class="col-md-4">
-          <label for="jobTypeInput" class="form-label fw-bold text-secondary mb-1">Job Type</label>
-          <mat-select multiple>
-            @for (level of jobTypeList; track level) {
-            <mat-option [value]="level">{{level}}</mat-option>
-            }
-          </mat-select>
-        </div>
-
-        <div class="col-md-2">
-          <!-- <mat-slide-toggle [(ngModel)]="isChecked">Slide Toggle Checked: {{isChecked}}</mat-slide-toggle> -->
-          <label class="form-label fw-semibold text-secondary mb-1">Remote</label><br>
-          <mat-slide-toggle></mat-slide-toggle>
-        </div>
-
-        <div class="col-md-4 mt-4">
-          <label for="locationInput" class="form-label fw-semibold text-secondary mb-1">Preferred Location</label>
-          <input type="text" id="locationInput" class="form-control shadow-sm border-light" [(ngModel)]="location"
-            name="location" placeholder="e.g. Bangladesh">
-        </div>
-
-        <div class="col-md-4 mt-4">
-          <label for="ignoreLocationInput" class="form-label fw-semibold text-secondary mb-1">Ignore Locations</label>
-          <input type="text" id="ignoreLocationInput" class="form-control shadow-sm border-light"
-            [(ngModel)]="ignoreLocations" name="ignoreLocations" placeholder="e.g. Pissrael">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Company</mat-label>
+            <input matInput formControlName="company" placeholder="e.g. Mozilla, Google">
+            <mat-icon matSuffix>business</mat-icon>
+          </mat-form-field>
         </div>
       </div>
 
-      <div class="d-flex justify-content-end align-items-center mt-4 pt-3 border-top gap-3">
-        <button type="button" class="btn btn-light px-4 fw-semibold text-secondary border shadow-sm"
-          (click)="onClear()">Clear Form</button>
-        <button type="submit" class="btn btn-primary px-5 py-2 fw-bold shadow" [disabled]="!keyword.trim()">Start
-          Search</button>
+      <!-- Row 2: The "Where" — Location Settings -->
+      <div class="row g-3 mb-2">
+        <div class="col-md-5">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Preferred Region</mat-label>
+            <mat-select multiple formControlName="locationZones">
+              @for (zone of geoZones; track zone) {
+                <mat-option [value]="zone">{{ zone }}</mat-option>
+              }
+            </mat-select>
+            <mat-icon matSuffix>public</mat-icon>
+            <mat-hint>Select one or more world regions</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-5">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Exclude Countries</mat-label>
+            <input matInput formControlName="ignoreLocations" placeholder="e.g. India, Pakistan, Israel">
+            <mat-icon matSuffix>location_off</mat-icon>
+            <mat-hint>Separate country names with commas</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-2 d-flex flex-column justify-content-center">
+          <mat-slide-toggle formControlName="isRemote" color="primary">Remote Only</mat-slide-toggle>
+        </div>
+      </div>
+
+      <!-- Row 3: The "Specifics" — Filters -->
+      <div class="row g-3">
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Experience Level</mat-label>
+            <mat-select multiple formControlName="experienceLevel">
+              @for (level of experienceLevelList; track level) {
+              <mat-option [value]="level">{{level}}</mat-option>
+              }
+            </mat-select>
+            <mat-icon matSuffix>trending_up</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Job Type</mat-label>
+            <mat-select multiple formControlName="jobType">
+              @for (type of jobTypeList; track type) {
+              <mat-option [value]="type">{{type}}</mat-option>
+              }
+            </mat-select>
+            <mat-icon matSuffix>work</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Posted Within</mat-label>
+            <mat-select formControlName="maxAgeDays">
+              @for (opt of maxAgeOptions; track opt.value) {
+              <mat-option [value]="opt.value">{{opt.label}}</mat-option>
+              }
+            </mat-select>
+            <mat-icon matSuffix>schedule</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end align-items-center mt-3 pt-3 border-top gap-3">
+        <button mat-stroked-button type="button" (click)="onClear()">Clear Form</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="searchForm.invalid">Start Search</button>
       </div>
     </form>
   </div>

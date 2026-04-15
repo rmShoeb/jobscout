@@ -45,13 +45,11 @@ export class AppComponent implements OnInit {
   });
 
   jobs = signal<Job[]>([]);
-  totalJobs = signal<number>(0);
   selectedJob = signal<Job | null>(null);
   
   // Pagination State
   currentPage = signal<number>(1);
-  pageSize = signal<number>(10);
-  totalPages = signal<number>(1);
+  hasMoreResults = signal<boolean>(false);
   
   // Cache to persist between page jumps
   lastCriteria = signal<SearchCriteria | null>(null);
@@ -87,21 +85,33 @@ export class AppComponent implements OnInit {
     this.fetchJobs();
   }
 
-  fetchJobs(): void {
+  fetchJobs(targetPage?: number): void {
     const criteria = this.lastCriteria();
     if (!criteria) return;
 
+    const requestedPage = targetPage ?? this.currentPage();
+
     this.isLoading.set(true);
-    // Uses HTTP RxJS Observable alongside functional pipelining
-    this.jobService.searchJobs(criteria, this.currentPage(), this.pageSize())
+    this.jobService.searchJobs(criteria, requestedPage)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
-          this.jobs.set(res.jobs);
-          this.totalJobs.set(res.total);
-          this.totalPages.set(Math.ceil(res.total / this.pageSize()) || 1);
+          if (res.jobs.length > 0) {
+            // Only commit the page change when we actually got results
+            this.currentPage.set(requestedPage);
+            this.jobs.set(res.jobs);
+            this.hasMoreResults.set(res.jobs.length >= 25);
+          } else if (requestedPage > 1) {
+            // Tried to go forward but no data — stay on current page
+            this.hasMoreResults.set(false);
+          } else {
+            // Page 1 with no results
+            this.jobs.set([]);
+            this.hasMoreResults.set(false);
+          }
         },
         error: (err) => {
+          // Page stays unchanged on error
           this.showError('Search Failed', err.message);
         }
       });
@@ -109,22 +119,16 @@ export class AppComponent implements OnInit {
 
   onClearSearch(): void {
     this.jobs.set([]);
-    this.totalJobs.set(0);
-    this.totalPages.set(1);
+    this.hasMoreResults.set(false);
     this.lastCriteria.set(null);
   }
 
   onPageChange(page: number): void {
-    this.currentPage.set(page);
-    this.fetchJobs();
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Elegant scroll snapping
+    this.fetchJobs(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  onSizeChange(size: number): void {
-    this.pageSize.set(size);
-    this.currentPage.set(1);
-    this.fetchJobs();
-  }
+
 
   openJobDetails(job: Job): void {
     this.selectedJob.set(job);

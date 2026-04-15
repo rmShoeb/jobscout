@@ -23,8 +23,8 @@ export class JobService {
     );
   }
 
-  searchJobs(criteria: SearchCriteria, page: number, limit: number): Observable<SearchResponse> {
-    const payload = { ...criteria, page, limit };
+  searchJobs(criteria: SearchCriteria, page: number): Observable<SearchResponse> {
+    const payload = { ...criteria, page };
     return this.http.post<SearchResponse>(`${this.apiUrl}/search`, payload).pipe(
       catchError(this.handleError)
     );
